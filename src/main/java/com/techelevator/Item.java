@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Item {
 
-    public static final int STARTING_QUANTITY = 5;
+    public static final int STARTING_QUANTITY = 2;
     private String slot;
     private String productName;
     private BigDecimal price;
@@ -47,7 +47,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return  getSlot() + " " + getProductName() + " "+ getPrice() + " quantity: " + getQuantity() ;
+        return  getSlot() + " | " + getProductName() + "  $"+ getPrice();
     }
 }
 

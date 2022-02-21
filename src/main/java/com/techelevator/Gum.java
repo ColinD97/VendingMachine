@@ -9,6 +9,11 @@ public class Gum extends Item{
 
     @Override
     public String getSound() {
-        return "Chew Chew, Yum!";
+        String newLine = System.getProperty("line.separator");
+        String asciiText = String.join(newLine,
+                "+-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+",
+                "|C| |h| |e| |w|   |C| |h| |e| |w| |,|   |Y| |u| |m| |!|",
+                "+-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+");
+        return asciiText;
     }
 }

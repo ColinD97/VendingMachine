@@ -30,7 +30,6 @@ public class Machine {
     }
 
     private List<Item> loadInventory() {
-        //File fileToRead= new File(inputFile);
         try (Scanner inventoryFile = new Scanner(inputFile)) {
             int counter = 0;
             while (inventoryFile.hasNextLine()) {
@@ -60,16 +59,6 @@ public class Machine {
         return inventory;
     }
 
-    public void displayInventory() {
-        for (Item unit : inventory) {
-            if (unit.getQuantity() <= 0){
-                System.out.println("SOLD OUT");
-            } else {
-                System.out.println(unit);
-            }
-        }
-
-    }
 
     public BigDecimal depositMoney(BigDecimal amountToDeposit) {
         balance = balance.add(amountToDeposit);
@@ -83,7 +72,7 @@ public class Machine {
             if (item.equals(itemChosen)){
                 if(item.getQuantity() >0 && item.getPrice().compareTo(balance) <= 0) {
                     item.deincrementQuantity();
-                    System.out.println("*** " + item.getSound());
+                    System.out.println(item.getSound());
                     itemPrice = item.getPrice();
                     balance = balance.subtract(itemPrice);
                     audit((item.getProductName() + " " + item.getSlot()), item.getPrice(), balance  );
@@ -96,54 +85,45 @@ public class Machine {
         }
     }
 
-        public void makeChange(){
+        public CoinPurse makeChange(){
+            CoinPurse purse = new CoinPurse();
             int quarter=0;
             int dime=0;
             int nickel=0;
-            //int change= Integer.valueOf(String.valueOf(balance.multiply(100.00)));
             BigDecimal hundred= new BigDecimal("100");
             BigDecimal tempBalance=balance.multiply(hundred);
             int change= (tempBalance.intValue());
-
-
-           while (change>=25){
-               change-=25;
-               quarter++;
-
-           }
-           while (change>=10){
-               change-=10;
-               dime ++;
-           }
-           while (change>=5){
-               change-=5;
-               nickel++;
-           }
+            while (change>=25){
+                change-=25;
+                quarter++;
+            }
+            while (change>=10){
+                change-=10;
+                dime++;
+            }
+            while (change>=5){
+                change-=5;
+                nickel++;
+            }
+            purse.setCoinQuarter(quarter);
+            purse.setCoinDime(dime);
+            purse.setCoinNickel(nickel);
 
             audit("Give change ", balance,new BigDecimal("0") );
-           balance=new BigDecimal("0");
-            System.out.println("Return change");
-            System.out.println("number of quarters " + quarter);
-            System.out.println("number of dimes " + dime);
-            System.out.println("number of nickels " + nickel);
-            System.out.println("Balance is " + balance);
-
-
-            //how would you convert this cleanly into BigDecimal
-            //balance.remainderOf ???
-
+            balance=new BigDecimal("0");
+            return purse;
     }
+
+
     public void salesReport(){
         BigDecimal salesTotal = new BigDecimal("0");
         int quantityItem = 0;
-
         System.out.println("Generating Sales Report...");
         for (Item item : inventory){
             BigDecimal itemQuantity = new BigDecimal(0);
             itemQuantity = BigDecimal.valueOf(Item.STARTING_QUANTITY - item.getQuantity());
             salesTotal = salesTotal.add(item.getPrice().multiply(itemQuantity));
         }
-        //System.out.println(salesTotal);
         try (PrintWriter printWriter = new PrintWriter("SalesReport.txt")){
             for(Item item : inventory){
                 printWriter.println(item.getProductName() +" | "+ (Item.STARTING_QUANTITY - item.getQuantity()));

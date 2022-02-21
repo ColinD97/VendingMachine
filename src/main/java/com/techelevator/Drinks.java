@@ -9,6 +9,12 @@ public class Drinks extends Item{
 
     @Override
     public String getSound() {
-        return "Glug Glug, Yum!";
+        String newLine = System.getProperty("line.separator");
+        String asciiText = String.join(newLine,
+                "+-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+",
+                "|G| |l| |u| |g|   |G| |l| |u| |g| |,|   |Y| |u| |m| |!|",
+                "+-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+");
+
+        return asciiText;
     }
 }

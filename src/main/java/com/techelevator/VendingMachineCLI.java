@@ -1,10 +1,10 @@
 package com.techelevator;
 
-import javax.swing.plaf.metal.MetalCheckBoxIcon;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class VendingMachineCLI {
@@ -43,27 +43,21 @@ public class VendingMachineCLI {
 	public void mainMenuUI() {
 		boolean isValidChoice = false;
 		while (!isValidChoice) {
+			System.out.println("_____MAIN MENU____");
 			System.out.println("1. Display Items");
 			System.out.println("2. Purchase Items");
 			System.out.println("3. Exit");
-			System.out.println("Please enter a choice: ");
+			System.out.println("Please enter a choice (1-3): ");
 			String userChoice = userInput.nextLine();
 			switch (userChoice) {
 				case "1":
-					//inventoryMaster.displayInventory();
-					vm1.displayInventory();
+					displayInventory();
 					System.out.println();
-					//System.out.println("choice 1");
-					//isValidChoice = true;
 					break;
 				case "2":
 					subMenu();
-					//System.out.println("choice 2");
-					//isValidChoice = true;
 					break;
 				case "3":
-					// exit program
-					//System.out.println("choice 3");
 					isValidChoice = true;
 					break;
 				case "4":
@@ -76,33 +70,53 @@ public class VendingMachineCLI {
 		}
 	}
 
+	public void displayInventory() {
+		List<Item> inventory = new ArrayList<>();
+		inventory = vm1.getInventory();
+		System.out.println();
+		System.out.println("------------------------------");
+		for (Item unit : inventory) {
+			if (unit.getQuantity() <= 0){
+				System.out.println(unit.getSlot() + " | SOLD OUT");
+			} else {
+				System.out.println(unit);
+			}
+		}
+		System.out.println("------------------------------");
+
+	}
+
 	public void subMenu() {
 		boolean isValidChoice = false;
+		CoinPurse purse = new CoinPurse();
 		while (!isValidChoice) {
 			System.out.println("------------------------");
-			System.out.println("1. Feed Money");
-			System.out.println("2. Select Product");
-			System.out.println("3. Finish Transaction");
-			System.out.println("Please enter a choice: ");
-
+			System.out.println("___PURCHASE MENU___");
+			System.out.println("1. Display Items");
+			System.out.println("2. Feed Money");
+			System.out.println("3. Select Product");
+			System.out.println("4. Finish Transaction");
+			System.out.println("Current Balance: $"+vm1.getBalance());
+			System.out.println("Please enter a choice (1-4): ");
 
 			String userChoice = userInput.nextLine();
 			switch (userChoice) {
 				case "1":
-					feedMoney();
+					displayInventory();
+					System.out.println();
 					break;
 				case "2":
-					selectProduct();
-					//isValidChoice = true;
+					feedMoneyDisplay();
 					break;
 				case "3":
-					// exit program
-					//TODO
-					vm1.makeChange();
-					//System.out.println("choice sub.3");
+					selectProductDisplay();
+					break;
+				case "4":
+					BigDecimal changeBalance = vm1.getBalance();
+					purse = vm1.makeChange();
+					displayChange(purse, changeBalance);
 					isValidChoice = true;
 					break;
-
 				default:
 					System.out.println("Not a valid entry");
 					break;
@@ -111,31 +125,32 @@ public class VendingMachineCLI {
 	}
 
 
-	private void feedMoney() {
+	private void feedMoneyDisplay() {
 		boolean isWholeNumber = false;
 		double tempDouble = 0;
 		while (!isWholeNumber) {
-			System.out.println("How much would you like to deposit (whole bills only): ");
-			String userChoice = userInput.nextLine();
-			tempDouble = Double.parseDouble(userChoice);
-			if (tempDouble % 1 == 0) {
-				isWholeNumber = true;
-			} else {
-				System.out.println("Not a whole bill, please try again");
+			try {
+				System.out.println("How much would you like to deposit (whole bills only): ");
+				String userChoice = userInput.nextLine();
+				tempDouble = Double.parseDouble(userChoice);
+				if (tempDouble % 1 == 0) {
+					isWholeNumber = true;
+				} else {
+					System.out.println("Not a whole bill, please try again");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Not a valid entry");
 			}
 		}
 		BigDecimal tempBigDecimal = new BigDecimal(tempDouble);
 		vm1.depositMoney(tempBigDecimal);
 		System.out.println("balance: " + vm1.getBalance());
-		//isValidChoice = true;
 	}
 
-	private void selectProduct() {
-
+	private void selectProductDisplay() {
 		// run loop through inventory to compare userInput to item.getSlot
 		//		if equal, run selectProduct with lowercase check
 		//		if not equal, ask again
-		// vm1.selectProduct();
 		boolean isValidSlot = false;
 		String userChoice= "";
 		Item itemChoice = null;
@@ -154,7 +169,18 @@ public class VendingMachineCLI {
 			}
 		}
 		vm1.selectProduct(itemChoice);
-		System.out.println("balance: " + vm1.getBalance());
+		System.out.println("New balance: $" + vm1.getBalance());
+	}
+
+
+	private void displayChange(CoinPurse purse, BigDecimal changeGiven) {
+		System.out.println();
+		System.out.println("Return change: $"+ changeGiven);
+		System.out.println("$"+purse.getValueQuarter() + " as " + purse.getCoinQuarter() + " quarters");
+		System.out.println("$"+purse.getValueDime() + " as " + purse.getCoinDime() + " dimes");
+		System.out.println("$"+purse.getValueNickel() + " as " + purse.getCoinNickel() + " nickels");
+		System.out.println("Balance is: $" + vm1.getBalance());
+		System.out.println();
 	}
 
 }

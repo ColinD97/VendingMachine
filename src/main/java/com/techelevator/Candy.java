@@ -9,6 +9,13 @@ public class Candy extends Item{
 
     @Override
     public String getSound() {
-        return "Munch Munch, Yum!";
+        String newLine = System.getProperty("line.separator");
+        String asciiText = String.join(newLine,
+                "+-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+",
+                "|M| |u| |n| |c| |h|   |M| |u| |n| |c| |h| |,|   |Y| |u| |m| |!|",
+                "+-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+   +-+ +-+ +-+ +-+"
+        );
+        return asciiText;
+       //return "Munch Munch, Yum!";
     }
 }
